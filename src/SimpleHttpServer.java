@@ -14,6 +14,7 @@ public class SimpleHttpServer {
         HttpServer server = HttpServer.create(new InetSocketAddress(8000), 0);
         server.createContext("/user", new userHandler());
         server.createContext("/maladie", new maladieHandler());
+        server.createContext("/comment", new commentHandler());
         server.setExecutor(null); // creates a default executor
         server.start();
     }
@@ -85,5 +86,40 @@ public class SimpleHttpServer {
             return result.toString("UTF-8");
         }
     }
+
+    static class commentHandler implements HttpHandler {
+        private List<String> comments = new ArrayList<>();
+
+        @Override
+        public void handle(HttpExchange t) throws IOException {
+            if ("POST".equals(t.getRequestMethod())) {
+                String requestBody = readRequestBody(t.getRequestBody());
+                comments.add(requestBody);
+                String response = "comment added";
+                t.sendResponseHeaders(200, response.length());
+                OutputStream os = t.getResponseBody();
+                os.write(response.getBytes());
+                os.close();
+            } else {
+                // return array of all the comments
+                String response = comments.toString();
+                t.sendResponseHeaders(200, response.length());
+                OutputStream os = t.getResponseBody();
+                os.write(response.getBytes());
+                os.close();
+            }
+        }
+
+        private String readRequestBody(InputStream is) throws IOException {
+            ByteArrayOutputStream result = new ByteArrayOutputStream();
+            byte[] buffer = new byte[1024];
+            int length;
+            while ((length = is.read(buffer)) != -1) {
+                result.write(buffer, 0, length);
+            }
+            return result.toString("UTF-8");
+        }
+    }
+
 
 }

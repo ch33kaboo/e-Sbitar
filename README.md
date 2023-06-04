@@ -17,3 +17,5 @@ java SimpleHttpServer
 - **GET /user** : returns array of all users in the platform.
 - **POST /maladie** : to add an illnesses to the platform, the request body must have these fields: `name`, `causes`, `symptoms`, `treatment`, `ressources`.
 - **GET /maladie** : returns array of all illnesses in the platform.
+- **POST /comment** : to add a comment (oppinion) about the platform.
+- **GET /comment** : returns array of all comments.
